@@ -103,6 +103,72 @@
     heads.forEach(function (h) { io.observe(h); });
   }
 
+  // ---- slide viewer: every "对应 PPT 第 x–y 页" marker opens the original slides ----
+  function pad(n) { return ("00" + n).slice(-3); }
+  function parseRange(s) {
+    var out = [];
+    s.split(",").forEach(function (part) {
+      var ab = part.split("-").map(Number);
+      for (var i = ab[0]; i <= (ab[1] || ab[0]); i++) out.push(i);
+    });
+    return out;
+  }
+  var viewer = document.createElement("div");
+  viewer.className = "viewer";
+  viewer.hidden = true;
+  viewer.setAttribute("role", "dialog");
+  viewer.setAttribute("aria-modal", "true");
+  viewer.innerHTML = '<div class="vbar"><span id="vTitle"></span><button type="button" id="vClose">关闭</button></div><div class="vbody" id="vBody"></div>';
+  document.body.appendChild(viewer);
+  var vBody = viewer.querySelector("#vBody");
+  var vTitle = viewer.querySelector("#vTitle");
+
+  function openViewer(range, label, push) {
+    var nums = parseRange(range);
+    vTitle.textContent = "课件原页 · " + label;
+    vBody.innerHTML = nums.map(function (n) {
+      return '<figure><img loading="lazy" decoding="async" alt="课件第 ' + n + ' 页" src="slides/' + pad(n) +
+        '.jpg"><figcaption>第 ' + n + " 页</figcaption></figure>";
+    }).join("");
+    vBody.scrollTop = 0;
+    viewer.hidden = false;
+    document.body.classList.add("viewing");
+    if (push) { try { history.pushState({ ppt: range }, "", "#ppt-" + range); } catch (e) {} }
+  }
+  function hideViewer() {
+    viewer.hidden = true;
+    vBody.innerHTML = "";
+    document.body.classList.remove("viewing");
+  }
+  function closeViewer() {
+    if (viewer.hidden) return;
+    if (history.state && history.state.ppt) history.back(); // lets the phone's back gesture and this button behave the same
+    else hideViewer();
+  }
+  viewer.querySelector("#vClose").onclick = closeViewer;
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeViewer(); });
+  window.addEventListener("popstate", function (e) {
+    if (e.state && e.state.ppt) openViewer(e.state.ppt, e.state.ppt.replace("-", "–") + " 页", false);
+    else hideViewer();
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll("div.ppt[data-ppt]")).forEach(function (d) {
+    var range = d.getAttribute("data-ppt");
+    var a = document.createElement("a");
+    a.className = "ppt";
+    a.setAttribute("data-ppt", range);
+    a.href = "slides/" + pad(parseRange(range)[0]) + ".jpg";
+    a.textContent = d.textContent;
+    a.title = "查看课件原页";
+    a.onclick = function (e) {
+      e.preventDefault();
+      openViewer(range, d.textContent.replace(/^对应\s*/, "").replace(/^PPT\s*/, ""), true);
+    };
+    d.parentNode.replaceChild(a, d);
+  });
+  var m = location.hash.match(/^#ppt-([\d,-]+)$/);
+  if (m) { try { history.replaceState(null, "", location.pathname); } catch (e) {} }
+
   // ---- pager ----
   var page = document.querySelector("main .page");
   if (page && idx >= 0) {

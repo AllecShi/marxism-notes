@@ -156,3 +156,58 @@ th { background: var(--bg-soft); font-weight: 600; white-space: nowrap; }
 .map td:first-child, .map td:nth-child(2) { white-space: nowrap; }
 details.ex > div { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 15.5px; }
 details.ex > div p:last-child { margin-bottom: 0; }
+
+/* ---------- arrows that turn vertical on phones ---------- */
+.ar { font-style: normal; }
+.ar::before { content: "→"; }
+
+/* ---------- clickable slide markers ---------- */
+a.ppt { cursor: pointer; color: var(--accent); border-color: var(--accent); text-decoration: none; }
+a.ppt:hover { background: var(--accent-soft); text-decoration: none; }
+a.ppt::after { content: " ›"; }
+
+/* ---------- slide viewer ---------- */
+.viewer { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: flex; flex-direction: column; }
+.viewer[hidden] { display: none; }
+.viewer .vbar {
+  flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 15px;
+}
+.viewer .vbar button { font: inherit; color: var(--ink); background: var(--bg-soft); border: 1px solid var(--line); border-radius: 6px; padding: 4px 14px; cursor: pointer; }
+.viewer .vbody { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
+.viewer figure { margin: 0 auto 22px; max-width: 1000px; }
+.viewer img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; aspect-ratio: 16 / 9; }
+.viewer figcaption { font-size: 13px; color: var(--ink-3); margin-top: 6px; text-align: center; }
+body.viewing { overflow: hidden; }
+
+/* ---------- phones ---------- */
+@media (max-width: 600px) {
+  body { font-size: 16px; line-height: 1.8; }
+  main { padding: 16px 16px 56px; }
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; margin-top: 36px; padding-top: 10px; }
+  h3 { font-size: 17.5px; margin-top: 26px; }
+  h4 { font-size: 16.5px; margin-top: 20px; }
+  .lead { margin-bottom: 16px; font-size: 15px; }
+  .ppt { margin-bottom: 8px; }
+  .topbar { padding: 6px 12px; }
+  .note, .def { padding: 10px 12px; font-size: 15px; }
+  blockquote { padding-left: 12px; }
+  .ex { padding: 12px; }
+  .ex ol.opt { padding-left: 1.4em; }
+  table { display: table; width: 100%; font-size: 14px; }
+  th, td { padding: 6px 7px; }
+  th { white-space: normal; }
+  .map td:first-child, .map td:nth-child(2) { white-space: normal; }
+  .fig { padding: 12px; overflow-x: visible; }
+  .fig .row { flex-direction: column; align-items: stretch; gap: 4px; }
+  .fig .row > .col { margin-left: 0 !important; }
+  .fig .box { min-width: 0 !important; }
+  .fig .arr { padding: 2px 0; }
+  .ar::before { content: "↓"; }
+  .tree ul { padding-left: .9em; }
+  .viewer .vbody { padding: 10px 8px; }
+  .pager { flex-direction: column; }
+  .pager a { max-width: 100%; }
+  .pager .next { text-align: left; margin-left: 0; }
+}
