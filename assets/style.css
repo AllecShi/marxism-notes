@@ -154,3 +154,5 @@ th { background: var(--bg-soft); font-weight: 600; white-space: nowrap; }
 .pager .next { text-align: right; margin-left: auto; }
 
 .map td:first-child, .map td:nth-child(2) { white-space: nowrap; }
+details.ex > div { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 15.5px; }
+details.ex > div p:last-child { margin-bottom: 0; }
